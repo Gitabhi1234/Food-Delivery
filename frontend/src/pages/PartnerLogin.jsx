@@ -2,19 +2,35 @@ import React from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { useNavigate } from 'react-router-dom'
+import PartnerDataContext from '../context/PartnerDataContext'
+import axios from 'axios'
+
 const PartnerLogin = () => {
-  const [email, setEmail] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [partnerData,setPartnerData] = useState({})
+   
+    const navigate = useNavigate()
+
+    const {partner,setPartner} = React.useContext(PartnerDataContext)
   
-    const submitHandler = (e) => {
+    const submitHandler =async (e) => {
       e.preventDefault()
     
-      setPartnerData({
+      const partner = {
         email: email,
         password: password
-      })
+      }
+
+      const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/partners/login`, partner)
       
+      if(response.status ===200){
+        const data = response.data
+        setPartner(data.partner)
+        localStorage.setItem('token', data.token)
+        navigate('/partner-home')
+      }
+
       setEmail('')
       setPassword('') }
   return (

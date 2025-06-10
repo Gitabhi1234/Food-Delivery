@@ -6,6 +6,8 @@ const app=express();
 
 const connectToDb=require('./db/db');
 const userRoutes=require('./routes/user.routes');
+const partnerRoutes = require('./routes/partner.routes');
+
 
 connectToDb();
 
@@ -22,5 +24,6 @@ app.get('/',function(req,res){
     res.send("you done it");
 });
 app.use('/users',userRoutes);
+app.use('/partners', partnerRoutes);
 
 module.exports=app;
