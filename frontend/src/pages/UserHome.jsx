@@ -12,6 +12,8 @@ const UserHome = () => {
   const [confirmOrderPanel, setConfirmOrderPanel] = useState(false);
   const [acceptedOrderPanel, setAcceptedOrderPanel] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [cartHotelId, setCartHotelId] = useState(null);
+  const [warning, setWarning] = useState('');
 
   const cartPanelRef = useRef(null);
 
@@ -41,12 +43,12 @@ const UserHome = () => {
             { headers: { Authorization: `Bearer ${token}` } }
           );
           if (response.status === 200) {
-            setCartItems(response.data.cartItems);
-            const newCartCount = response.data.cartItems.reduce(
-              (sum, item) => sum + item.quantity,
-              0
-            );
-            setCartCount(newCartCount);
+            const items = response.data.cartItems;
+            setCartItems(items);
+            setCartCount(items.reduce((sum, item) => sum + item.quantity, 0));
+            if (items.length > 0) {
+              setCartHotelId(items[0].partnerId);
+            }
           }
         } catch (error) {
           console.error("Error fetching cart items:", error);
@@ -56,14 +58,17 @@ const UserHome = () => {
     fetchCartItems();
   }, []);
 
-  const handleAddToCart = async (item) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert("Please log in as a user to add items to the cart.");
-        return;
-      }
+  const handleAddToCart = async (item, partnerId) => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
+    if (cartHotelId && cartHotelId !== partnerId) {
+      setWarning('You can only order from one hotel at a time.');
+      setTimeout(() => setWarning(''), 3000);
+      return;
+    }
+
+    try {
       const payload = {
         item: {
           itemId: item._id,
@@ -81,12 +86,11 @@ const UserHome = () => {
       );
 
       if (response.status === 201) {
-        setCartItems(response.data.cartItems);
-        const newCartCount = response.data.cartItems.reduce(
-          (sum, cartItem) => sum + cartItem.quantity,
-          0
-        );
-        setCartCount(newCartCount);
+        const items = response.data.cartItems;
+        setCartItems(items);
+        setCartCount(items.reduce((sum, item) => sum + item.quantity, 0));
+        setCartHotelId(partnerId);
+        setWarning('');
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -94,14 +98,11 @@ const UserHome = () => {
   };
 
   const handleRemoveItemFromCart = (itemId) => {
-    setCartItems((prevCartItems) => {
-      const updatedCart = prevCartItems.filter(item => item.itemId !== itemId);
-      const newCartCount = updatedCart.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-      setCartCount(newCartCount);
-      return updatedCart;
+    setCartItems((prev) => {
+      const updated = prev.filter(item => item.itemId !== itemId);
+      setCartCount(updated.reduce((sum, item) => sum + item.quantity, 0));
+      if (updated.length === 0) setCartHotelId(null);
+      return updated;
     });
   };
 
@@ -122,53 +123,52 @@ const UserHome = () => {
           onRemove={handleRemoveItemFromCart}
         />
       </div>
-      
+
       <div className="p-4 flex-grow">
         <h1 className="text-2xl font-bold mb-4 text-center">Partner Items</h1>
-        {partners.filter(partner => partner.items && partner.items.length > 0).length === 0 ? (
+
+        {warning && (
+          <div className="bg-yellow-100 text-yellow-800 p-2 mb-4 rounded text-center text-sm">
+            {warning}
+          </div>
+        )}
+
+        {partners.filter(p => p.items?.length).length === 0 ? (
           <p className="text-center text-base">No partner items available.</p>
         ) : (
-          partners.filter(partner => partner.items && partner.items.length > 0)
-            .map((partner) => (
-              <div 
-                key={partner._id}
-                className="mb-4 border p-4 rounded bg-white shadow"
-              >
-                <h2 className="text-lg font-semibold mb-2">
-                   {partner.hotelname}
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                  {partner.items.map((item) => (
-                    <div 
-                      key={item._id}
-                      className="border rounded p-2 bg-gray-100 flex flex-col"
+          partners.filter(p => p.items?.length).map((partner) => (
+            <div key={partner._id} className="mb-4 border p-4 rounded bg-white shadow">
+              <h2 className="text-lg font-semibold mb-2">{partner.hotelname}</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                {partner.items.map((item) => (
+                  <div key={item._id} className="border rounded p-2 bg-gray-100 flex flex-col">
+                    <img
+                      src={item.photo || 'https://via.placeholder.com/100'}
+                      alt={item.name}
+                      className="w-full h-30 object-cover rounded mb-1"
+                    />
+                    <h3 className="text-sm font-medium mb-0">{item.name}</h3>
+                    <p className="text-gray-700 text-xs mb-0">₹{item.price.toFixed(2)}</p>
+                    <p className="text-xs text-gray-500 mt-auto">
+                      {item.available ? 'Available' : 'Unavailable'}
+                    </p>
+                    <button
+                      onClick={() => handleAddToCart(item, partner._id)}
+                      className="mt-2 flex items-center justify-center space-x-1 bg-green-400 text-white text-xs px-2 py-1 rounded hover:bg-blue-600"
                     >
-                      <img
-                        src={item.photo || 'https://via.placeholder.com/100'}
-                        alt={item.name}
-                        className="w-full  h-30 object-cover rounded mb-1"
-                      />
-                      <h3 className="text-sm font-medium mb-0">{item.name}</h3>
-                      <p className="text-gray-700 text-xs mb-0">₹{item.price.toFixed(2)}</p>
-                      <p className="text-xs text-gray-500 mt-auto">
-                        {item.available ? 'Available' : 'Unavailable'}
-                      </p>
-                      <button 
-                        onClick={() => handleAddToCart(item)}
-                        className="mt-2 flex items-center justify-center space-x-1 bg-green-400 text-white text-xs px-2 py-1 rounded hover:bg-blue-600"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span>Add to Cart</span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Add to Cart</span>
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))
+            </div>
+          ))
         )}
       </div>
+
       <footer className="fixed bottom-0 left-0 right-0 bg-white p-2 shadow-inner">
         <div className="flex relative justify-evenly items-center bg-gray-100 rounded-lg p-2">
           <button
@@ -187,8 +187,8 @@ const UserHome = () => {
             </div>
             <span>Cart</span>
           </button>
-          <Link to="user-profile"
-            
+          <Link
+            to="user-profile"
             className="flex items-center space-x-2 bg-white border border-gray-300 rounded-full px-4 py-2 text-sm hover:bg-gray-100"
           >
             <div className="bg-white rounded-full p-1">
@@ -200,6 +200,7 @@ const UserHome = () => {
           </Link>
         </div>
       </footer>
+
       {confirmOrderPanel && (
         <ConfirmOrder
           setConfirmOrderPanel={setConfirmOrderPanel}

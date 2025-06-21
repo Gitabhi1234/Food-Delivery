@@ -4,6 +4,7 @@ const userService = require('../services/user.service');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
 
+
 module.exports.registeruser = async function(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

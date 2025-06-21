@@ -15,6 +15,7 @@ import Home from './pages/home'
 import UserHome from './pages/UserHome'
 import UserProfille from './pages/UserProfile'
 
+
 const App = () => {
   return (
     <div>
@@ -72,6 +73,7 @@ const App = () => {
             </UserProtectWrapper>
           }
         />
+       
       </Routes>
     </div>
   );

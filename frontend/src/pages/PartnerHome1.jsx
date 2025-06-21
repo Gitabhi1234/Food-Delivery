@@ -9,7 +9,6 @@ const PartnerHome1 = () => {
   const [pendingOrder, setPendingOrder] = useState(null);
   const token = localStorage.getItem('token');
 
-  // Fetch orders for the authenticated partner
   const fetchOrders = useCallback(async () => {
     try {
       const response = await axios.get(
@@ -18,8 +17,6 @@ const PartnerHome1 = () => {
       );
       if (response.status === 200 && Array.isArray(response.data.orders)) {
         setOrders(response.data.orders);
-
-        // Find the first pending order for popup
         const firstPending = response.data.orders.find((o) => o.status === 'Pending');
         setPendingOrder(firstPending || null);
       } else {
@@ -34,25 +31,44 @@ const PartnerHome1 = () => {
   }, [token]);
 
   useEffect(() => {
-    fetchOrders(); // Fetch orders on component mount
+    fetchOrders();
     const interval = setInterval(fetchOrders, 10000);
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
-  // Only show accepted orders in the main list
   const acceptedOrders = orders.filter((order) => order.status === 'Accepted');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/partner-login');
+  };
 
   return (
     <div className="min-h-screen bg-white p-4 flex flex-col">
-      {/* Header */}
-      <img
-        className="w-16 ml-2 pb-4"
-        src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png"
-        alt="Logo"
-      />
+      <div className="flex justify-between items-center mb-4">
+        <img
+          className="w-16"
+          src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png"
+          alt="Logo"
+        />
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate('/partner-home')}
+            className="bg-blue-500 hover:bg-blue-600 transition-colors text-white px-4 py-2 rounded"
+          >
+            Adjust Your Items
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 transition-colors text-white px-4 py-2 rounded"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
       <h1 className="text-2xl font-bold mb-4 text-center">Orders Dashboard</h1>
 
-      {/* Accepted Orders List */}
       {acceptedOrders.length === 0 ? (
         <p className="text-center text-lg">No accepted orders found.</p>
       ) : (
@@ -110,17 +126,6 @@ const PartnerHome1 = () => {
         </div>
       )}
 
-      {/* Footer */}
-      <div className="flex flex-col gap-3 mt-auto">
-        <button
-          onClick={() => navigate('/partner-home')}
-          className="bg-blue-500 hover:bg-blue-600 transition-colors text-white px-4 py-2 rounded"
-        >
-          Adjust Your Items
-        </button>
-      </div>
-
-      {/* Popup for pending order */}
       {pendingOrder && (
         <OrderDecisionPanel
           order={pendingOrder}

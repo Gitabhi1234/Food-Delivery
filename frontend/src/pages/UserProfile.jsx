@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const [userDetails, setUserDetails] = useState({});
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState('Pending'); // default tab
+  const [activeTab, setActiveTab] = useState('Pending');
+  const navigate = useNavigate();
 
   const token = localStorage.getItem('token');
 
@@ -30,24 +32,45 @@ const UserProfile = () => {
     }
   }, [token]);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  const handleGoBack = () => {
+    navigate('/user-home');
+  };
+
   const statusGroups = {
     Accepted: '✅ Accepted',
     Pending: '⌛ Pending',
     Rejected: '❌ Rejected',
   };
 
-  const filteredOrders = orders.filter(
-    (order) => order.status === activeTab
-  );
+  const filteredOrders = orders.filter((order) => order.status === activeTab);
 
   return (
     <div className="min-h-screen bg-[#f9fafb] px-6 py-8">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={handleGoBack}
+            className="text-sm bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+          >
+            ← Go Back
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+          >
+            Logout
+          </button>
+        </div>
+
         <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
           👤 User Profile
         </h1>
 
-       
         <div className="bg-white rounded-xl shadow-md p-6 mb-10">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
             Profile Details
@@ -65,7 +88,6 @@ const UserProfile = () => {
           </div>
         </div>
 
-        
         <div className="mb-6 flex gap-4 justify-center">
           {Object.keys(statusGroups).map((status) => (
             <button
@@ -82,14 +104,15 @@ const UserProfile = () => {
           ))}
         </div>
 
-      
         <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">
             {statusGroups[activeTab]} Orders
           </h2>
 
           {filteredOrders.length === 0 ? (
-            <p className="text-gray-500 text-center">No {activeTab.toLowerCase()} orders.</p>
+            <p className="text-gray-500 text-center">
+              No {activeTab.toLowerCase()} orders.
+            </p>
           ) : (
             filteredOrders.map((order, index) => (
               <div
