@@ -154,14 +154,17 @@ const Home = () => {
         ref={lookingForAcceptancePanelRef}
         className="fixed z-10 bottom-0 px-3 py-6 translate-y-full bg-white w-full"
       >
-        <LookingForPartnerAcceptance
-          setAcceptedOrderPanel={setAcceptedOrderPanel}
-          setRejectedOrderPanel={setRejectedOrderPanel}
-          setLookingForAcceptancePanel={setLookingForAcceptancePanel}
-          selectedLocation={selectedLocation}
-          totalPrice={totalPrice}
-          orderId={orderId}
-        />
+       {orderId && (
+       <LookingForPartnerAcceptance
+    setAcceptedOrderPanel={setAcceptedOrderPanel}
+    setRejectedOrderPanel={setRejectedOrderPanel}
+    setLookingForAcceptancePanel={setLookingForAcceptancePanel}
+    selectedLocation={selectedLocation}
+    totalPrice={totalPrice}
+    orderId={orderId}
+  />
+    )}
+ 
       </div>
     </div>
   );

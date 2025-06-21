@@ -199,7 +199,7 @@ module.exports.sendOrder = async (req, res, next) => {
 module.exports.orderStatus = async (req, res, next) => {
   try {
     const { orderId } = req.params;
-  console.log)
+  console.log(orderId)
     const order = await Order.findOne({ orderId });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });

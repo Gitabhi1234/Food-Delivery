@@ -9,32 +9,37 @@ const LookingForPartnerAcceptance = ({
   totalPrice,
   orderId,
 }) => {
+
   useEffect(() => {
-  console.log("🟢 Polling for order:", orderId);
-   const orderid=String(orderId);
+    if (!orderId) {
+    
+    return;
+  }
+  
+  
 
   const token = localStorage.getItem("token");
 
   const pollOrderStatus = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/orders/status/${orderid}`,
+        `${import.meta.env.VITE_BASE_URL}/partners/order-status/${orderId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       const status = response.data.status;
-      console.log("🔄 Order status received:", status); // <- Add this
+      
 
-      if (status === "accepted") {
-        alert("✅ Order accepted!");
+      if (status === "Accepted") {
+       
         setLookingForAcceptancePanel(false);
-      } else if (status === "rejected") {
-        alert("❌ Order rejected.");
+        setAcceptedOrderPanel(true);
+      } else if (status === "Rejected") {
+        
         setLookingForAcceptancePanel(false);
-      } else {
-        console.log("⌛ Still waiting...");
+        setRejectedOrderPanel(true);
       }
     } catch (err) {
       console.error("Polling error:", err);
@@ -43,7 +48,7 @@ const LookingForPartnerAcceptance = ({
 
   const intervalId = setInterval(pollOrderStatus, 5000);
   return () => clearInterval(intervalId);
-}, [orderId, setLookingForAcceptancePanel]);
+}, [orderId, setLookingForAcceptancePanel, setAcceptedOrderPanel, setRejectedOrderPanel]);
 
   return (
     <div>
