@@ -28,7 +28,7 @@ const PartnerLogin = () => {
         const data = response.data
         setPartner(data.partner)
         localStorage.setItem('token', data.token)
-        navigate('/partner-home')
+        navigate('/partner-home1')
       }
 
       setEmail('')
