@@ -9,9 +9,9 @@ import PartnerSignup from './pages/PartnerSignup'
 import UserProtectWrapper from './pages/UserProtectWrapper'
 import UserLogout from './pages/UserLogout'
 import PartnerHome from './pages/PartnerHome'
-import PartnerHome1 from './pages/PartnerHome1' // new welcome interface for partners
+import PartnerHome1 from './pages/PartnerHome1' 
 import PartnerProtectWrapper from './pages/PartnerProtectWrapper'
-import Home from './pages/home'
+import Home from './pages/Home'
 import UserHome from './pages/UserHome'
 import UserProfille from './pages/UserProfile'
 
