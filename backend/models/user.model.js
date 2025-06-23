@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     ],
     orders: [
         {
-                       
+           orderId: { type: String, required: true },       
             items: [
                 {
                     itemId: { type: mongoose.Schema.Types.ObjectId, required: true },

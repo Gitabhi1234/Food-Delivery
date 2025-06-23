@@ -68,7 +68,7 @@ const ConfirmOrder = ({
           
           await axios.post(
             `${import.meta.env.VITE_BASE_URL}/users/cart/confirm`,
-            {},
+            {orderId: returnedOrderId},
             { headers: { Authorization: `Bearer ${token}` } }
           );
 

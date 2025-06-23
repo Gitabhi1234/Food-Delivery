@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const [userDetails, setUserDetails] = useState({});
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState('Pending');
+  const [activeTab, setActiveTab] = useState("Pending");
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -23,7 +23,7 @@ const UserProfile = () => {
           setOrders(response.data.orders || []);
         }
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error("Error fetching user details:", error);
       }
     };
 
@@ -33,18 +33,18 @@ const UserProfile = () => {
   }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const handleGoBack = () => {
-    navigate('/user-home');
+    navigate("/user-home");
   };
 
   const statusGroups = {
-    Accepted: '✅ Accepted',
-    Pending: '⌛ Pending',
-    Rejected: '❌ Rejected',
+    Accepted: "✅ Accepted",
+    Pending: "⌛ Pending",
+    Rejected: "❌ Rejected",
   };
 
   const filteredOrders = orders.filter((order) => order.status === activeTab);
@@ -77,13 +77,13 @@ const UserProfile = () => {
           </h2>
           <div className="text-gray-600 space-y-2">
             <p>
-              <span className="font-medium">Name:</span>{' '}
-              {userDetails?.fullname?.firstname || 'N/A'}{' '}
-              {userDetails?.fullname?.lastname || ''}
+              <span className="font-medium">Name:</span>{" "}
+              {userDetails?.fullname?.firstname || "N/A"}{" "}
+              {userDetails?.fullname?.lastname || ""}
             </p>
             <p>
-              <span className="font-medium">Email:</span>{' '}
-              {userDetails?.email || 'N/A'}
+              <span className="font-medium">Email:</span>{" "}
+              {userDetails?.email || "N/A"}
             </p>
           </div>
         </div>
@@ -94,8 +94,8 @@ const UserProfile = () => {
               key={status}
               className={`px-4 py-2 rounded-full text-sm font-semibold border ${
                 activeTab === status
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
               }`}
               onClick={() => setActiveTab(status)}
             >
@@ -120,8 +120,21 @@ const UserProfile = () => {
                 className="border border-gray-200 rounded-lg p-5 mb-6 bg-gray-50"
               >
                 <div className="mb-3">
+                  <p className="text-gray-700 break-all">
+                    <span className="font-medium">Order ID:</span>{" "}
+                    {order.orderId ? (
+                      <>
+                        {order.orderId.slice(0, -4)}
+                        <span className="font-bold">
+                          {order.orderId.slice(-4)}
+                        </span>
+                      </>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
                   <p className="text-gray-700">
-                    <span className="font-medium">Order Date:</span>{' '}
+                    <span className="font-medium">Order Date:</span>{" "}
                     {new Date(order.orderDate).toLocaleDateString()}
                   </p>
                   <p className="text-gray-700">
@@ -142,7 +155,7 @@ const UserProfile = () => {
                       />
                       <div className="text-gray-700 space-y-1">
                         <p>
-                          <span className="font-medium">Item Name:</span>{' '}
+                          <span className="font-medium">Item Name:</span>{" "}
                           {item.name}
                         </p>
                         <p>
@@ -150,7 +163,7 @@ const UserProfile = () => {
                           {item.price.toFixed(2)}
                         </p>
                         <p>
-                          <span className="font-medium">Quantity:</span>{' '}
+                          <span className="font-medium">Quantity:</span>{" "}
                           {item.quantity}
                         </p>
                       </div>

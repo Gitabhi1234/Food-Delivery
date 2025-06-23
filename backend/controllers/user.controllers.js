@@ -133,13 +133,16 @@ module.exports.deleteCartItem = async (req, res, next) => {
 module.exports.confirmCartAsOrder = async (req, res, next) => {
     try {
         const user = req.user;
-
+         const { orderId } = req.body;
+        
         if (!user.cartItems || user.cartItems.length === 0) {
             return res.status(400).json({ message: 'Cart is empty. Cannot confirm order.' });
         }
-
+        if (!orderId) {
+         return res.status(400).json({ message: 'Order ID is required.' });
+       }
         user.orders.push({
-            
+            orderId: orderId || new Date().toISOString(),
             items: user.cartItems,
             orderDate: new Date(),
             status: 'Pending'

@@ -1,93 +1,111 @@
-import React from 'react'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { useNavigate } from 'react-router-dom'
-import PartnerDataContext from '../context/PartnerDataContext'
-import axios from 'axios'
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import PartnerDataContext from '../context/PartnerDataContext';
+import axios from 'axios';
 
 const PartnerLogin = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-   
-    const navigate = useNavigate()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-    const {partner,setPartner} = React.useContext(PartnerDataContext)
-  
-    const submitHandler =async (e) => {
-      e.preventDefault()
-        setError('');
-        setSuccess('');
-    
-      const partner = {
-        email: email,
-        password: password
-      }
-      try{
-      const response=await axios.post(`${import.meta.env.VITE_BASE_URL}/partners/login`, partner)
-      
-      if(response.status ===200){
-        const data = response.data
-        setPartner(data.partner)
-        localStorage.setItem('token', data.token)
+  const navigate = useNavigate();
+  const { setPartner } = useContext(PartnerDataContext);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    const partner = { email, password };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/partners/login`,
+        partner
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setPartner(data.partner);
+        localStorage.setItem('token', data.token);
         setSuccess('Login successful! Redirecting...');
-        setTimeout(() => navigate('/partner-home1'),500);
+        setTimeout(() => navigate('/partner-home1'), 500);
       }
-    }catch (err) {
+    } catch (err) {
       const msg =
-        err.response?.data?.message ||
-        'Login failed. Please check your credentials.';
+        err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(msg);
     }
-      setEmail('')
-      setPassword('') }
+
+    setEmail('');
+    setPassword('');
+  };
+
   return (
-     <div className='p-7 h-screen flex flex-col justify-between'>
-      <div>
-        <img className='w-16 ml-2 pb-7 ' src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png" alt="" />
-           
-        <form onSubmit={(e) =>
-         {submitHandler(e)}}>
-          <h3  className=
-          'text-lg font-medium mb-2'> What's your Email  </h3>
-          <input 
-          required 
-          value={email}
-          onChange={(e) => 
-          setEmail(e.target.value)
-          }
-          className='rounded bg-[#eeeeee] mb-7 px-4 py-2 border w-full text-lg placeholder:text-base'
-          type="email" 
-          placeholder='example@gmail.com' />
-          <h3 className=
-          'text-lg font-medium mb-2'>Enter Password </h3>
-          <input 
-          required 
-          value={password}
-          onChange={(e) => 
-          setPassword(e.target.value)
-          }
-          className='rounded bg-[#eeeeee] mb-7 px-4 py-2 border w-full text-lg placeholder:text-base'
-          type="password"
-          placeholder='password' />
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-600 to-indigo-800 px-4 py-6 flex flex-col">
+      <img
+        className="w-14 ml-2 mb-6"
+        src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png"
+        alt="Logo"
+      />
 
-           {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
-          {success && <p className="text-green-600 text-sm mb-4">{success}</p>}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="bg-white border border-gray-200 shadow-md rounded-xl w-full max-w-md p-6 sm:p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Partner Sign In</h2>
 
-          <button  className='rounded bg-[#111] text-white font-semibold mb-3 px-4 py-2 border w-full text-lg placeholder:text-base' type='submit'>Login</button>
-        
-        </form>
-       <p className='text-center-align'>Join a fleet? <Link to='/partner-signup' className='text-blue-600'> Register as a delivary Partner</Link></p>
-      </div>
-      <div>
-         <Link  to='/login'
-         className='rounded bg-[#744949] flex items-center justify-center text-white font-semibold mb-7 px-4 py-2 border w-full text-lg placeholder:text-base'
-         type='submit'>Sign in as User</Link>
+          <form onSubmit={submitHandler}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="example@gmail.com"
+              className="mb-4 w-full px-4 py-2 rounded-lg bg-gray-100 border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              placeholder="password"
+              className="mb-4 w-full px-4 py-2 rounded-lg bg-gray-100 border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+
+            {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+            {success && <p className="text-green-600 text-sm mb-2">{success}</p>}
+
+            <button
+              type="submit"
+              className="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition duration-200"
+            >
+              Login
+            </button>
+          </form>
+
+          <p className="text-center text-sm mt-5 text-gray-600">
+            Join a fleet?{' '}
+            <Link
+              to="/partner-signup"
+              className="underline text-emerald-700 hover:text-emerald-900"
+            >
+              Register as a Delivery Partner
+            </Link>
+          </p>
+
+          <Link
+            to="/login"
+            className="mt-6 block w-full text-center bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2 rounded-lg"
+          >
+            Sign in as User
+          </Link>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PartnerLogin
+export default PartnerLogin;

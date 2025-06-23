@@ -8,7 +8,6 @@ const UserSignup = () => {
   const [password, setPassword] = useState(""); 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState(""); 
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -51,90 +50,93 @@ const UserSignup = () => {
   };
 
   return (
-    <div className="p-7 h-screen flex flex-col justify-between">
-      <div>
-        <img
-          className="w-16 ml-2 pb-7"
-          src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png"
-          alt="Logo"
-        />
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-600 to-indigo-800 px-4 py-6 flex flex-col">
+      <img
+        className="w-14 ml-2 mb-6"
+        src="https://cdn-icons-png.flaticon.com/128/3063/3063822.png"
+        alt="Logo"
+      />
 
-        <form onSubmit={submitHandler}>
-          <h3 className="text-base font-medium mb-2">What's your Name</h3>
-          <div className="flex gap-4 mb-6">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="bg-white border border-gray-200 shadow-md rounded-xl w-full max-w-md p-6 sm:p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
+
+          <form onSubmit={submitHandler}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <div className="flex gap-4 mb-4">
+              <input
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="rounded-lg bg-gray-100 px-4 py-2 border border-gray-300 w-1/2 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                type="text"
+                placeholder="First name"
+              />
+              <input
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="rounded-lg bg-gray-100 px-4 py-2 border border-gray-300 w-1/2 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                type="text"
+                placeholder="Last name"
+              />
+            </div>
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               required
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="rounded bg-[#eeeeee] px-4 py-2 border w-1/2 text-base placeholder:text-sm"
-              type="text"
-              placeholder="First name"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="rounded-lg bg-gray-100 mb-4 px-4 py-2 border border-gray-300 w-full text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              type="email"
+              placeholder="example@gmail.com"
             />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               required
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="rounded bg-[#eeeeee] px-4 py-2 border w-1/2 text-base placeholder:text-sm"
-              type="text"
-              placeholder="Last name"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="rounded-lg bg-gray-100 mb-4 px-4 py-2 border border-gray-300 w-full text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              type="password"
+              placeholder="Password"
             />
-          </div>
 
-          <h3 className="text-base font-medium mb-2">What's your email</h3>
-          <input
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="rounded bg-[#eeeeee] mb-6 px-4 py-2 border w-full text-base placeholder:text-sm"
-            type="email"
-            placeholder="example@gmail.com"
-          />
+            {error && (
+              <p className="text-red-600 text-sm mb-2">{error}</p>
+            )}
+            {success && (
+              <p className="text-green-600 text-sm mb-2">{success}</p>
+            )}
 
-          <h3 className="text-base mb-2 font-medium">Enter Password</h3>
-          <input
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="rounded bg-[#eeeeee] mb-4 px-4 py-2 border w-full text-base placeholder:text-sm"
-            type="password"
-            placeholder="Password"
-          />
+            <button
+              type="submit"
+              className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold mb-3 px-4 py-2 w-full text-base transition"
+            >
+              Sign Up
+            </button>
+          </form>
 
-          {error && (
-            <p className="text-red-600 text-sm mb-4">{error}</p>
-          )}
-          {success && (
-            <p className="text-green-600 text-sm mb-4">{success}</p>
-          )}
+          <p className="text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="underline text-emerald-700 hover:text-emerald-900">
+              Login here
+            </Link>
+          </p>
 
-          <button
-            type="submit"
-            className="rounded bg-[#111] text-white font-semibold mb-3 px-4 py-2 border w-full text-base"
+          <p className="text-[10px] mt-6 text-center text-gray-500 leading-tight">
+            This site is protected by reCAPTCHA and the{" "}
+            <span className="underline">Google Privacy Policy</span> and{" "}
+            <span className="underline">Terms of Service</span> apply.
+          </p>
+
+          <Link
+            to="/partner-login"
+            className="mt-4 block bg-gray-800 hover:bg-gray-900 text-white text-center font-semibold px-4 py-2 w-full rounded-lg"
           >
-            Sign Up
-          </button>
-        </form>
-
-        <p className="text-center text-sm">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 underline">
-            Login here
+            Sign in as Partner
           </Link>
-        </p>
-      </div>
-
-      <div>
-        <p className="text-[10px] leading-tight">
-          This site is protected by reCAPTCHA and the{" "}
-          <span className="text-blue-600 underline">Google Privacy Policy</span> and{" "}
-          <span className="underline text-blue-500">Terms of Service</span> apply.
-        </p>
-        <Link
-          to="/partner-login"
-          className="rounded bg-green-600 flex items-center justify-center text-white font-semibold mt-4 px-4 py-2 w-full text-lg"
-        >
-          Sign in as Partner
-        </Link>
+        </div>
       </div>
     </div>
   );
