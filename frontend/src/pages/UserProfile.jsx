@@ -45,6 +45,8 @@ const UserProfile = () => {
     Accepted: "✅ Accepted",
     Pending: "⌛ Pending",
     Rejected: "❌ Rejected",
+    Dispatched: " Packed",
+    Delivered: " Delivered",
   };
 
   const filteredOrders = orders.filter((order) => order.status === activeTab);
@@ -88,7 +90,7 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <div className="mb-6 flex gap-4 justify-center">
+        <div className="mb-6 flex gap-4 flex-wrap justify-center">
           {Object.keys(statusGroups).map((status) => (
             <button
               key={status}

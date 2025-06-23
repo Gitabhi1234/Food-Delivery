@@ -267,4 +267,40 @@ module.exports.updateOrderStatus = async (req, res, next) => {
     next(error);
   }
 };
+module.exports.updateOrderStatusById= async (req, res, next) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
 
+  if (!['Pending', 'Accepted', 'Rejected', 'Dispatched', 'Delivered'].includes(status)) {
+    return res.status(400).json({ message: 'Invalid status value.' });
+  }
+
+  try {
+    
+    const user = await userModel.findOne({ 'orders.orderId': orderId });
+    if (!user) {
+      return res.status(404).json({ message: 'Order not found in user data.' });
+    }
+
+    const userOrder = user.orders.find(o => o.orderId === orderId);
+    if (userOrder) {
+      userOrder.status = status;
+      await user.save();
+    }
+
+    
+    const partner = await partnerModel.findOne({ 'orders.orderId': orderId });
+    if (partner) {
+      const partnerOrder = partner.orders.find(o => o.orderId === orderId);
+      if (partnerOrder) {
+        partnerOrder.status = status;
+        await partner.save();
+      }
+    }
+
+    res.status(200).json({ message: 'Order status updated successfully.' });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ message: 'Server error while updating order status.' });
+  }
+};

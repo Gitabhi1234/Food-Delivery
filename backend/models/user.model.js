@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
             orderDate: { type: Date, default: Date.now },
             status: {
                 type: String,
-                enum: ['Pending', 'Accepted', 'Rejected'],
+                enum: ['Pending', 'Accepted', 'Rejected','Dispatched', 'Delivered'],
                 default: 'Pending',
             },
         },

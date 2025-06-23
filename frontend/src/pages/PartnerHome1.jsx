@@ -36,11 +36,28 @@ const PartnerHome1 = () => {
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
-  const acceptedOrders = orders.filter((order) => order.status === 'Accepted');
+  const acceptedOrders = orders
+    .filter((order) => order.status === 'Accepted' || order.status === 'Dispatched')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/partner-login');
+  };
+
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/partners/orders/${orderId}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.status === 200) {
+        fetchOrders();
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
   };
 
   return (
@@ -121,6 +138,24 @@ const PartnerHome1 = () => {
                   </tr>
                 </tbody>
               </table>
+              <div className="flex gap-4">
+                {order.status === 'Accepted' && (
+                  <button
+                    onClick={() => handleStatusUpdate(order.orderId, 'Dispatched')}
+                    className="bg-blue-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                  >
+                    Dispatch
+                  </button>
+                )}
+                {order.status === 'Dispatched' && (
+                  <button
+                    onClick={() => handleStatusUpdate(order.orderId, 'Delivered')}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                  >
+                    Mark Delivered
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
