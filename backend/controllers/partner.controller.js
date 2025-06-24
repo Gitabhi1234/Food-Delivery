@@ -304,3 +304,45 @@ module.exports.updateOrderStatusById= async (req, res, next) => {
     res.status(500).json({ message: 'Server error while updating order status.' });
   }
 };
+module.exports.getWeeklyEarnings = async (req, res, next) => {
+  try {
+    const partnerId = req.partner.id;
+
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - 6);
+
+    const dayMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weeklyData = [
+      { day: 'Sun', earnings: 0 },
+      { day: 'Mon', earnings: 0 },
+      { day: 'Tue', earnings: 0 },
+      { day: 'Wed', earnings: 0 },
+      { day: 'Thu', earnings: 0 },
+      { day: 'Fri', earnings: 0 },
+      { day: 'Sat', earnings: 0 }
+    ];
+
+    const partner = await partnerModel.findById(partnerId);
+    if (!partner) return res.status(404).json({ message: "Partner not found." });
+
+    if (!partner.orders || partner.orders.length === 0) {
+      return res.status(200).json(weeklyData);
+    }
+
+    partner.orders.forEach(order => {
+      if (
+        order.status === "Delivered" &&
+        new Date(order.createdAt) >= startOfWeek
+      ) {
+        const orderDayIndex = new Date(order.createdAt).getDay();
+        weeklyData[orderDayIndex].earnings += order.totalPrice;
+      }
+    });
+   console.log("Weekly Earnings Data:", weeklyData);
+    res.status(200).json(weeklyData);
+  } catch (error) {
+    console.error("Error fetching weekly earnings:", error);
+    res.status(500).json({ message: "Server error while fetching weekly earnings." });
+  }
+};

@@ -24,6 +24,6 @@ router.post('/getpartner', partnerController.getPartner);
 router.get('/all', partnerController.getAllPartners);
 router.post('/update-order-status', partnerController.updateOrderStatus);
 router.patch('/orders/:orderId/status', authMiddleware.authPartner, partnerController.updateOrderStatusById);
-
+router.get('/weekly-earnings',authMiddleware.authPartner, partnerController.getWeeklyEarnings);
 
 module.exports = router;

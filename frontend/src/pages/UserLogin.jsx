@@ -27,7 +27,7 @@ const UserLogin = () => {
         setUser(res.data.user);
         localStorage.setItem('token', res.data.token);
         setSuccess('Login successful! Redirecting...');
-        setTimeout(() => navigate('/user-home'), 500);
+        setTimeout(() => navigate('/user-home'));
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');

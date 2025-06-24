@@ -15,6 +15,8 @@ import Home from './pages/Home'
 import UserHome from './pages/UserHome'
 import UserProfille from './pages/UserProfile'
 
+import PartnerDashboard from './pages/PartnerDashboard'
+
 
 const App = () => {
   return (
@@ -71,6 +73,14 @@ const App = () => {
             <UserProtectWrapper>
               <UserProfille />
             </UserProtectWrapper>
+          }
+        />
+        <Route
+          path="/partner-dashboard"
+          element={
+            <PartnerProtectWrapper>
+            <PartnerDashboard />
+            </PartnerProtectWrapper>
           }
         />
        

@@ -58,13 +58,12 @@ const UserHome = () => {
   const handleAddToCart = async (item, partnerId) => {
     const token = localStorage.getItem('token');
     if (!token) return;
-
+    if (!item.available) return;
     if (cartHotelId && cartHotelId !== partnerId) {
       setWarning('You can only order from one hotel at a time.');
       setTimeout(() => setWarning(''), 3000);
       return;
     }
-
     try {
       const payload = {
         item: {
@@ -75,13 +74,11 @@ const UserHome = () => {
           quantity: 1
         }
       };
-
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/cart/add`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (response.status === 201) {
         const items = response.data.cartItems;
         setCartItems(items);
@@ -156,9 +153,14 @@ const UserHome = () => {
                     </p>
                     <button
                       onClick={() => handleAddToCart(item, partner._id)}
-                      className="mt-3 text-xs font-semibold bg-gradient-to-r from-green-400 to-blue-500 text-white px-3 py-1 rounded-full hover:from-green-500 hover:to-blue-600 transition-colors"
+                      className={`mt-3 text-xs font-semibold px-3 py-1 rounded-full transition-colors ${
+                        item.available
+                          ? 'bg-gradient-to-r from-green-400 to-blue-500 text-white hover:from-green-500 hover:to-blue-600'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                      disabled={!item.available}
                     >
-                      + Add to Cart
+                      {item.available ? '+ Add to Cart' : 'Unavailable'}
                     </button>
                   </div>
                 ))}

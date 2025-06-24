@@ -30,7 +30,7 @@ const PartnerLogin = () => {
         setPartner(data.partner);
         localStorage.setItem('token', data.token);
         setSuccess('Login successful! Redirecting...');
-        setTimeout(() => navigate('/partner-home1'), 500);
+        setTimeout(() => navigate('/partner-home1'));
       }
     } catch (err) {
       const msg =

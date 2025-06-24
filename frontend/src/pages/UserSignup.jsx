@@ -36,7 +36,7 @@ const UserSignup = () => {
         setUser(data.user);
         localStorage.setItem('token', data.token);
         setSuccess("Account created successfully!");
-        setTimeout(() => navigate("/user-home"), 1000);
+        setTimeout(() => navigate("/user-home"));
       }
     } catch (err) {
       const msg = err?.response?.data?.message || "Registration failed. Please try again.";

@@ -38,7 +38,7 @@ const PartnerSignup = () => {
         setPartner(data.partner);
         localStorage.setItem('token', data.token);
         setSuccess('Account created successfully!');
-        setTimeout(() => navigate('/partner-home1'), 1000);
+        setTimeout(() => navigate('/partner-home1'));
       }
     } catch (error) {
       const msg = error?.response?.data?.message || 'Registration failed. Please try again.';
